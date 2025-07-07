@@ -15,10 +15,10 @@ const (
 	url    = "amqp://34.56.24.250:5672"
 )
 
-func Watch(ctx context.Context, s *sqlc.Queries, name string) error {
+func Watch(ctx context.Context, s *sqlc.Queries, name string) {
 	rmq, err := clientCreate(name)
 	if err != nil {
-		return fmt.Errorf("❌ Could not create client: %v", err)
+		return
 	}
 	data, err := rmq.GetPixelColor(width, height)
 	if err != nil {
@@ -26,7 +26,7 @@ func Watch(ctx context.Context, s *sqlc.Queries, name string) error {
 		for i := 0; i < 5; i++ {
 			sound.PlayBeep()
 		}
-		return fmt.Errorf("❌ Could not get pixel color: %v", err)
+		return
 	}
 	if len(data.Windows)%4 != 0 {
 		fmt.Printf("invalid number of windows received")
@@ -34,26 +34,26 @@ func Watch(ctx context.Context, s *sqlc.Queries, name string) error {
 			sound.PlayBeep()
 		}
 
-		return fmt.Errorf("invalid number of windows received")
+		return
 	}
 	err = process.InsertWindow(rmq, s, ctx)
 	if err != nil {
-		return err
+		return
 	}
 	changes, err := s.CheckRecentChanges5min(ctx)
 	if err != nil {
-		return fmt.Errorf("❌ Could not check recent changes: %v", err)
+		return
 	}
 	for _, v := range changes {
-		if v.TotalPixel > 8 && v.TotalUniquePixel == 1 {
-			fmt.Printf(" %s", v.Title)
+		if v.TotalPixel > 7 && v.TotalUniquePixel <= 3 {
+			fmt.Println("%s %s", v.Name, v.Title)
 			for i := 0; i < 3; i++ {
 				sound.PlayBeep()
 			}
-			return fmt.Errorf("garbar hai bhaiya garbar hai %v", v.TotalUniquePixel)
+			return
 		}
 	}
-	return nil
+	return
 }
 func clientCreate(user string) (*client.AutomationRPCClient, error) {
 	rmq, err := client.NewAutomationRPCClient(url, user)

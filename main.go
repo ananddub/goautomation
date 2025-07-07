@@ -27,12 +27,14 @@ func main() {
 	}(database)
 	count := 0
 	for {
-		fmt.Printf("🔄 Monitoring... %d\n", count)
-		err = monitor.Watch(ctx, s, "raiboss1")
+		monitor.Watch(ctx, s, "raiboss1")
+		fmt.Println("checked raiboss1")
+		monitor.Watch(ctx, s, "raiboss2")
+		fmt.Println("checked raiboss2")
+		monitor.Watch(ctx, s, "mylaptop")
+		fmt.Println("checked mylaptop")
 		err = s.DeleteAfter30min(ctx)
-		if err != nil {
-			log.Fatalf("❌ Could not delete old records: %v", err)
-		}
+		fmt.Println("🔄 Monitoring... ", count)
 		time.Sleep(time.Second * 30)
 		count++
 	}
