@@ -1,16 +1,24 @@
-.PHONY: build run clean sqlc-generate db-reset
+.PHONY: build run clean sqlc-generate db-reset build-gui gui
 
-# Build the application
+# Build the CLI application
 build:
 	go build -o goautomation .
 
-# Run the application
+# Build the GUI application
+build-gui:
+	go build -o goautomation-gui ./gui/
+
+# Run the CLI application
 run:
 	go run main.go
 
+# Run the GUI application
+gui:
+	go run ./gui/main.go
+
 # Clean build artifacts
 clean:
-	rm -f goautomation
+	rm -f goautomation goautomation-gui
 	rm -rf data/
 
 # Generate Go code from SQL queries

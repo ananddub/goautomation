@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -14,6 +15,7 @@ import (
 type Database struct {
 	DB      *sql.DB
 	Queries *sqlc.Queries
+	Context context.Context
 }
 
 // NewDatabase creates a new database connection and applies migrations
@@ -39,6 +41,7 @@ func NewDatabase(dbPath string) (*Database, error) {
 	return &Database{
 		DB:      db,
 		Queries: queries,
+		Context: context.Background(),
 	}, nil
 }
 

@@ -132,6 +132,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getRecentAutomationLogsStmt, err = db.PrepareContext(ctx, getRecentAutomationLogs); err != nil {
 		return nil, fmt.Errorf("error preparing query GetRecentAutomationLogs: %w", err)
 	}
+	if q.getRecentPixelStatsStmt, err = db.PrepareContext(ctx, getRecentPixelStats); err != nil {
+		return nil, fmt.Errorf("error preparing query GetRecentPixelStats: %w", err)
+	}
 	if q.getTodaysLogsStmt, err = db.PrepareContext(ctx, getTodaysLogs); err != nil {
 		return nil, fmt.Errorf("error preparing query GetTodaysLogs: %w", err)
 	}
@@ -371,6 +374,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getRecentAutomationLogsStmt: %w", cerr)
 		}
 	}
+	if q.getRecentPixelStatsStmt != nil {
+		if cerr := q.getRecentPixelStatsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getRecentPixelStatsStmt: %w", cerr)
+		}
+	}
 	if q.getTodaysLogsStmt != nil {
 		if cerr := q.getTodaysLogsStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getTodaysLogsStmt: %w", cerr)
@@ -536,6 +544,7 @@ type Queries struct {
 	getMostCommonPixelColorsStmt         *sql.Stmt
 	getMostUsedPositionsStmt             *sql.Stmt
 	getRecentAutomationLogsStmt          *sql.Stmt
+	getRecentPixelStatsStmt              *sql.Stmt
 	getTodaysLogsStmt                    *sql.Stmt
 	getYesterdaysLogsStmt                *sql.Stmt
 	listAutomationLogsStmt               *sql.Stmt
@@ -596,6 +605,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getMostCommonPixelColorsStmt:         q.getMostCommonPixelColorsStmt,
 		getMostUsedPositionsStmt:             q.getMostUsedPositionsStmt,
 		getRecentAutomationLogsStmt:          q.getRecentAutomationLogsStmt,
+		getRecentPixelStatsStmt:              q.getRecentPixelStatsStmt,
 		getTodaysLogsStmt:                    q.getTodaysLogsStmt,
 		getYesterdaysLogsStmt:                q.getYesterdaysLogsStmt,
 		listAutomationLogsStmt:               q.listAutomationLogsStmt,

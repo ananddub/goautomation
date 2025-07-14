@@ -10,13 +10,16 @@ import (
 )
 
 const (
-	width  = 0.62
-	height = 0.92
+	// width  = 0.72
+	// height = 0.92
+
+	width  = 0.55
+	height = 0.70
 	url    = "amqp://34.56.24.250:5672"
 )
 
-func Watch(ctx context.Context, s *sqlc.Queries, name string) {
-	rmq, err := clientCreate(name)
+func UpdateTable(name string, s *sqlc.Queries, ctx context.Context) {
+	rmq, err := ClientCreate(name)
 	if err != nil {
 		return
 	}
@@ -40,25 +43,47 @@ func Watch(ctx context.Context, s *sqlc.Queries, name string) {
 	if err != nil {
 		return
 	}
+}
+
+func Watch(ctx context.Context, s *sqlc.Queries, name string) {
+	UpdateTable(name, s, ctx)
 	changes, err := s.CheckRecentChanges5min(ctx)
 	if err != nil {
 		return
 	}
+	flag := false
 	for _, v := range changes {
-		if v.TotalPixel > 7 && v.TotalUniquePixel <= 3 {
-			fmt.Println("%s %s", v.Name, v.Title)
-			for i := 0; i < 3; i++ {
-				sound.PlayBeep()
-			}
-			return
+		if v.TotalPixel > 7 && v.TotalUniquePixel <= 2 {
+			fmt.Println(v.Name, v.Title)
+			flag = true
 		}
 	}
-	return
+	if flag {
+		for i := 0; i < 3; i++ {
+			sound.PlayBeep()
+		}
+	}
 }
-func clientCreate(user string) (*client.AutomationRPCClient, error) {
+func ClientCreate(user string) (*client.AutomationRPCClient, error) {
 	rmq, err := client.NewAutomationRPCClient(url, user)
 	if err != nil {
 		return nil, err
 	}
 	return rmq, nil
+}
+
+func ClickEvent(name string, width float64, height float64, x *float64, y *float64) {
+	rmq, err := ClientCreate(name)
+	if err != nil || rmq == nil {
+		return
+	}
+	w := width
+	h := height
+	emptyString := "20"
+	db, err := rmq.MoveMouse(&emptyString, x, y, &w, &h)
+	fmt.Println(
+		db)
+	if err != nil {
+		fmt.Printf("❌ Could not trigger click event: %v", err)
+	}
 }

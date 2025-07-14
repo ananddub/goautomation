@@ -57,10 +57,58 @@ func (q *Queries) CheckRecentChanges5min(ctx context.Context) ([]CheckRecentChan
 
 const deleteAfter30min = `-- name: DeleteAfter30min :exec
 DELETE FROM automation_logs
-WHERE create_at < datetime('now', '-30 minutes')
+WHERE create_at < datetime('now', '-20 minutes')
 `
 
 func (q *Queries) DeleteAfter30min(ctx context.Context) error {
 	_, err := q.exec(ctx, q.deleteAfter30minStmt, deleteAfter30min)
 	return err
+}
+
+const getRecentPixelStats = `-- name: GetRecentPixelStats :many
+WITH recent_logs AS (
+    SELECT
+        name,
+        title,
+        pixel_color,
+        create_at
+    FROM automation_logs
+    WHERE create_at >= datetime('now', '-5 minutes')
+)
+SELECT
+    name,
+    COUNT(pixel_color) as total_pixel,
+    COUNT(DISTINCT pixel_color) as total_unique_pixel
+FROM recent_logs
+GROUP BY name
+HAVING total_unique_pixel > 4
+`
+
+type GetRecentPixelStatsRow struct {
+	Name             string `json:"name"`
+	TotalPixel       int64  `json:"total_pixel"`
+	TotalUniquePixel int64  `json:"total_unique_pixel"`
+}
+
+func (q *Queries) GetRecentPixelStats(ctx context.Context) ([]GetRecentPixelStatsRow, error) {
+	rows, err := q.query(ctx, q.getRecentPixelStatsStmt, getRecentPixelStats)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetRecentPixelStatsRow{}
+	for rows.Next() {
+		var i GetRecentPixelStatsRow
+		if err := rows.Scan(&i.Name, &i.TotalPixel, &i.TotalUniquePixel); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

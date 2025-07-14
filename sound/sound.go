@@ -7,6 +7,7 @@ import (
 )
 
 func PlayBeep() {
+	return
 	switch runtime.GOOS {
 	case "darwin": // macOS
 		path := "sound/mixkit-sport-start-bleeps-918.wav"

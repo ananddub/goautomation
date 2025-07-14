@@ -10,9 +10,13 @@ FROM automation_logs
 WHERE create_at >= datetime('now', '-5 minutes')
 GROUP BY title,name;
 
+
+
+
+
 -- name: DeleteAfter30min :exec
 DELETE FROM automation_logs
-WHERE create_at < datetime('now', '-100 minutes');
+WHERE create_at < datetime('now', '-20 minutes');
 
 -- name: GetRecentPixelStats :many
 WITH recent_logs AS (

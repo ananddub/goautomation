@@ -67,6 +67,7 @@ type Querier interface {
 	// READ OPERATIONS - Time-based Queries
 	// ==========================================
 	GetRecentAutomationLogs(ctx context.Context) ([]AutomationLog, error)
+	GetRecentPixelStats(ctx context.Context) ([]GetRecentPixelStatsRow, error)
 	GetTodaysLogs(ctx context.Context) ([]AutomationLog, error)
 	GetYesterdaysLogs(ctx context.Context) ([]AutomationLog, error)
 	// ==========================================
