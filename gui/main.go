@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"goautomation/sound"
 	"image/color"
 	"sort"
 	"time"
+
+	"goautomation/sound"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -84,16 +85,18 @@ func (gui *MonitorGUI) initDatabase() error {
 
 func (gui *MonitorGUI) checkCondition(row sqlc.CheckRecentChanges5minRow) bool {
 	// Changed condition to >= 7 instead of > 7 to match actual data
+	if row.Name == "raiboss1" && row.Title == "BlueStacks App Player 31" {
+		return false
+	}
 	return row.TotalPixel >= 7 && row.TotalUniquePixel <= 2
 }
 
 func (gui *MonitorGUI) loadData() {
 	ctx := context.Background()
-	//monitor.UpdateTable("raiboss1", gui.database.Queries, ctx)
-	//monitor.UpdateTable("raiboss2", gui.database.Queries, ctx)
-	//monitor.UpdateTable("mylaptop", gui.database.Queries, ctx)
+	// monitor.UpdateTable("raiboss1", gui.database.Queries, ctx)
+	// monitor.UpdateTable("raiboss2", gui.database.Queries, ctx)
+	// monitor.UpdateTable("mylaptop", gui.database.Queries, ctx)
 	changes, err := gui.database.Queries.CheckRecentChanges5min(ctx)
-
 	if err != nil {
 		gui.statusLabel.SetText(fmt.Sprintf("Error: %v", err))
 		return

@@ -3,6 +3,7 @@ package monitor
 import (
 	"context"
 	"fmt"
+
 	"goautomation/client"
 	"goautomation/db/sqlc"
 	"goautomation/process"
@@ -15,7 +16,7 @@ const (
 
 	width  = 0.55
 	height = 0.70
-	url    = "amqp://34.56.24.250:5672"
+	url    = "amqp://34.47.218.48:5672"
 )
 
 func UpdateTable(name string, s *sqlc.Queries, ctx context.Context) {
@@ -53,6 +54,10 @@ func Watch(ctx context.Context, s *sqlc.Queries, name string) {
 	}
 	flag := false
 	for _, v := range changes {
+		if v.Name == "raiboss1" && v.Title == "BlueStacks App Player 31" {
+			continue
+		}
+
 		if v.TotalPixel > 7 && v.TotalUniquePixel <= 2 {
 			fmt.Println(v.Name, v.Title)
 			flag = true
@@ -64,6 +69,7 @@ func Watch(ctx context.Context, s *sqlc.Queries, name string) {
 		}
 	}
 }
+
 func ClientCreate(user string) (*client.AutomationRPCClient, error) {
 	rmq, err := client.NewAutomationRPCClient(url, user)
 	if err != nil {

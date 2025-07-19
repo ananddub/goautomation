@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	DefaultPath = "amqp://34.56.24.250:5672"
+	DefaultPath = "amqp://34.47.218.48:5672"
 	DefaultUser = "raiboss1"
 )
 

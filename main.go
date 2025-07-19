@@ -33,7 +33,7 @@ func mains() {
 		fmt.Println("checked raiboss2")
 		// monitor.Watch(ctx, s, "mylaptop")
 		// fmt.Println("checked mylaptop")
-		err = s.DeleteAfter30min(ctx)
+		_ = s.DeleteAfter30min(ctx)
 		fmt.Println("🔄 Monitoring... ", count)
 		time.Sleep(time.Second * 30)
 		count++
