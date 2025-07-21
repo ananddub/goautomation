@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"goautomation/static"
 	"log"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 )
 
 const (
-	DefaultPath = "amqp://34.47.218.48:5672"
+	DefaultPath = static.IP
 	DefaultUser = "raiboss1"
 )
 

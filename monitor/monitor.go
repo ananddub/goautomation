@@ -8,6 +8,7 @@ import (
 	"goautomation/db/sqlc"
 	"goautomation/process"
 	"goautomation/sound"
+	"goautomation/static"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 
 	width  = 0.55
 	height = 0.70
-	url    = "amqp://34.47.218.48:5672"
+	url    = static.IP
 )
 
 func UpdateTable(name string, s *sqlc.Queries, ctx context.Context) {

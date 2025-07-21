@@ -1,4 +1,4 @@
-.PHONY: build run clean sqlc-generate db-reset build-gui gui
+.PHONY: build run clean sqlc-generate db-reset build-gui gui run-all run-gui
 
 # Build the CLI application
 build:
@@ -15,6 +15,17 @@ run:
 # Run the GUI application
 gui:
 	go run ./gui/main.go
+
+# Run the GUI application (alias for consistency)
+run-gui:
+	go run ./gui/main.go
+
+# Run both CLI and GUI applications sequentially
+run-all:
+	@echo "Starting CLI application..."
+	@go run main.go & go run ./gui/main.go
+	@echo "Starting GUI application..."
+	
 
 # Clean build artifacts
 clean:
